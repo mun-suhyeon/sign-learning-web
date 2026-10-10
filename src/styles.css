@@ -24,6 +24,7 @@
   background: var(--paper);
   font-family: var(--sans);
   line-height: 1.5;
+  word-break: keep-all;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -127,5 +128,305 @@ video {
 @media (max-width: 640px) {
   .site-header-meta .label {
     display: none;
+  }
+}
+
+/* ── 기준 영상 자리 표시 (VideoFrame) ── */
+.frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.frame-light {
+  aspect-ratio: 435 / 315;
+  background: var(--placeholder);
+  --frame-line: rgb(18 18 17 / 0.28);
+  --frame-ink: var(--muted);
+}
+
+.frame-dark {
+  background: var(--screen);
+  --frame-line: rgb(255 255 255 / 0.16);
+  --frame-ink: var(--screen-ink);
+}
+
+.frame-cross::before,
+.frame-cross::after {
+  content: '';
+  position: absolute;
+  background: var(--frame-line);
+}
+
+.frame-cross::before {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+}
+
+.frame-cross::after {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+
+.frame-label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking);
+  color: var(--frame-ink);
+  white-space: nowrap;
+}
+
+.frame-ref {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+.frame-time {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+}
+
+.frame-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -1.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.frame-plus {
+  font-family: var(--mono);
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--frame-ink);
+}
+
+/* ── 홈: 소개 ── */
+.home-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+  padding-block: 3.4rem 3.75rem;
+}
+
+.home-intro-main .label {
+  margin: 0;
+}
+
+.home-title {
+  margin: clamp(2rem, 4.1vw, 4.8rem) 0 0;
+  font-family: var(--sans);
+  font-size: clamp(2.6rem, 4.25vw, 5.4rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+}
+
+.home-intro-aside {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-left: 1.9rem;
+  border-left: 1px solid var(--rule-soft);
+}
+
+.home-lede {
+  margin: 0;
+  color: #4a4945;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.home-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+/* ── 홈: 아카이브 카드 ── */
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  border-left: 1px solid var(--rule-soft);
+}
+
+.archive-grid > li {
+  display: flex;
+  border-right: 1px solid var(--rule-soft);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1.25rem 1.2rem 1.15rem;
+  text-decoration: none;
+}
+
+.card:focus-visible {
+  outline-offset: -4px;
+}
+
+.card-body {
+  padding-top: 1.6rem;
+}
+
+.card-kicker {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #4a4945;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.35rem;
+}
+
+.card-title {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: clamp(1.15rem, 1.1vw, 1.4rem);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.card-arrow {
+  flex: none;
+  transition: translate 0.15s ease;
+}
+
+.card:hover .card-arrow,
+.card:focus-visible .card-arrow {
+  translate: 4px 0;
+}
+
+.card:hover .frame-light {
+  background: #d6d4cc;
+}
+
+.card-meaning {
+  margin: 0.6rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.card-status {
+  margin-top: auto;
+  padding-top: 2.4rem;
+}
+
+.card-status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.card-rule {
+  height: 3px;
+  margin-top: 0.6rem;
+  background: var(--rule-soft);
+}
+
+.card-rule > div {
+  height: 100%;
+  background: var(--ink);
+}
+
+/* ── 홈: 푸터 ── */
+.home-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding-block: 1.75rem 2.5rem;
+}
+
+.home-footer .label {
+  margin: 0;
+  font-size: 0.6875rem;
+}
+
+.home-notice {
+  margin: 0.45rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* ── 좁은 화면: 깨지지 않을 정도만 (CLAUDE.md §14) ── */
+@media (max-width: 1500px) {
+  .home-lede br {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .archive-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .archive-grid > li:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--rule-soft);
+  }
+}
+
+@media (max-width: 760px) {
+  .home-intro {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .home-intro-aside {
+    padding: 1.25rem 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--rule-soft);
+  }
+
+  .home-title br {
+    display: none;
+  }
+
+  .home-footer {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 560px) {
+  .archive-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .archive-grid > li {
+    border-bottom: 1px solid var(--rule-soft);
+  }
+
+  .archive-grid > li:last-child {
+    border-bottom: 0;
   }
 }
