@@ -34,6 +34,9 @@ interface ReferenceVideoProps {
   onReady?: (video: HTMLVideoElement) => void
   onPlayingChange?: (playing: boolean) => void
   onTime?: (sec: number) => void
+  onEnded?: () => void
+  /** WATCH에서는 반복 재생, PRACTICE·COMPARE에서는 한 번만 */
+  loop?: boolean
   /** 영상 위에 겹칠 요소 (재생 버튼 등) */
   children?: ReactNode
 }
@@ -43,7 +46,16 @@ interface ReferenceVideoProps {
  * 촬영된 방향 그대로 보여 준다 — 어떤 경우에도 좌우반전하지 않는다(CLAUDE.md §7.2, §11).
  * 영상 파일이 아직 없거나 읽을 수 없으면 디자인의 자리 표시를 그대로 보여 준다.
  */
-export function ReferenceVideo({ sign, videoRef, onReady, onPlayingChange, onTime, children }: ReferenceVideoProps) {
+export function ReferenceVideo({
+  sign,
+  videoRef,
+  onReady,
+  onPlayingChange,
+  onTime,
+  onEnded,
+  loop = true,
+  children,
+}: ReferenceVideoProps) {
   const [ready, setReady] = useState(false)
   const [failed, setFailed] = useState(false)
 
@@ -55,10 +67,10 @@ export function ReferenceVideo({ sign, videoRef, onReady, onPlayingChange, onTim
           className={ready ? 'is-ready' : undefined}
           src={assetUrl(sign.video)}
           poster={assetUrl(sign.poster)}
-          preload="metadata"
+          preload="auto"
           muted
           playsInline
-          loop
+          loop={loop}
           aria-label={`참고 시연 영상, 표현 ${pad2(sign.order)}`}
           onLoadedMetadata={(e) => {
             setReady(true)
@@ -67,6 +79,7 @@ export function ReferenceVideo({ sign, videoRef, onReady, onPlayingChange, onTim
           onPlay={() => onPlayingChange?.(true)}
           onPause={() => onPlayingChange?.(false)}
           onTimeUpdate={(e) => onTime?.(e.currentTarget.currentTime)}
+          onEnded={onEnded}
           onError={() => setFailed(true)}
         />
       )}
