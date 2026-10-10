@@ -22,7 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# MediaPipe assets (npm run setup)
-public/mediapipe
-.smoke

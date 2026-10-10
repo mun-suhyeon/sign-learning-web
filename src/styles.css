@@ -1,0 +1,131 @@
+/*
+ * 기반 스타일 — design-reference/*.png 기준
+ * 모노크롬, 에디토리얼, 얇은 선, 절제된 여백. 게임 요소 없음.
+ */
+:root {
+  --paper: #f4f2ec;
+  --ink: #121211;
+  --muted: #6e6d68;
+  --rule: #121211;
+  --rule-soft: #c8c6bf;
+  --placeholder: #dedcd5;
+  --screen: #1b1b1a;
+  --screen-ink: #8a8984;
+
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
+    'Noto Sans KR', sans-serif;
+
+  --gutter: clamp(16px, 2.5vw, 48px);
+  --tracking: 0.08em;
+
+  color-scheme: light;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+/* 키보드 포커스 표시는 지우지 않는다 (CLAUDE.md §13) */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ── 공통 텍스트 ── */
+.label {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ── 레이아웃 셸 ── */
+.shell {
+  min-height: 100vh;
+  padding-inline: var(--gutter);
+}
+
+/* ── 헤더 ── */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1.6rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+
+.brand-name {
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  letter-spacing: var(--tracking);
+}
+
+.site-header-meta {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 5rem);
+}
+
+.counter {
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  letter-spacing: var(--tracking);
+}
+
+@media (max-width: 640px) {
+  .site-header-meta .label {
+    display: none;
+  }
+}
