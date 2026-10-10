@@ -95,3 +95,10 @@ export const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`
 
 /** 1 → "01" */
 export const pad2 = (n: number) => String(n).padStart(2, '0')
+
+/** 초 → "00:07". 길이를 모르면(0) "--:--" */
+export function formatTime(sec: number): string {
+  if (!sec) return '--:--'
+  const s = Math.round(sec)
+  return `${pad2(Math.floor(s / 60))}:${pad2(s % 60)}`
+}
