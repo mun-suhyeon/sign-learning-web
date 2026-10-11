@@ -1,9 +1,9 @@
 /**
  * 표현(단어) 데이터 — CLAUDE.md §10 스키마.
  *
- * 실제 한국수어 콘텐츠는 아직 확정되지 않았다(CLAUDE.md §8, §21).
- * 제작자가 확정하기 전까지 수어 관련 값은 모두 TODO 플레이스홀더로 둔다.
- * 수어 동작·뜻·비교 포인트를 추측해서 채우지 않는다.
+ * 표현 4개와 사전 항목은 제작자가 확정했다(CLAUDE.md §8, §21).
+ * 비교 포인트와 비수지 여부는 아직 확정 전이므로 TODO 플레이스홀더로 둔다.
+ * 수어 동작·비교 포인트를 추측해서 채우지 않는다.
  */
 
 export const TODO = 'TODO(제작자 입력)'
@@ -31,11 +31,11 @@ export interface DictionaryRef {
 }
 
 export interface SignItem {
-  /** 파일명과 동일 (확정 전: todo-1 ~ todo-4) */
+  /** 표현 식별자. 영상·포스터 파일명은 video/poster 경로를 따른다 */
   id: string
   /** 한국어 뜻 (표시용) */
   meaning: string
-  /** 홈에서의 순서 (1~4) */
+  /** 풀 안에서의 순서. 화면의 표현 번호는 세션 안의 위치를 쓴다 */
   order: number
   /** BASE_URL 기준 상대 경로 */
   video: string
@@ -49,39 +49,83 @@ export interface SignItem {
 }
 
 export const CATEGORY: { id: string; title: string } = {
-  id: 'todo-category',
-  title: TODO,
+  id: 'daily-expression',
+  title: '일상 표현',
 }
 
-function placeholder(order: number): SignItem {
-  const id = `todo-${order}`
-  return {
-    id,
-    meaning: TODO,
-    order,
-    video: `signs/${id}.mp4`,
-    poster: `signs/${id}.webp`,
-    durationSec: 0, // TODO(제작자 입력): 촬영 후 실제 길이
-    points: [
-      { aspect: null, text: TODO },
-      { aspect: null, text: TODO },
-    ],
-    nonManualRequired: false, // TODO(제작자 입력)
-    dictionary: {
-      headword: TODO,
-      searchUrl: '',
-      originNo: TODO,
-      topCategory: TODO,
-      checkedAt: TODO,
-    },
-    status: 'draft',
-  }
-}
+const DICTIONARY_SEARCH = 'https://sldict.korean.go.kr/front/search/searchAllList.do?searchKeyword='
 
-export const SIGNS: SignItem[] = [1, 2, 3, 4].map(placeholder)
+const dictionaryRef = (headword: string, originNo: string): DictionaryRef => ({
+  headword,
+  searchUrl: `${DICTIONARY_SEARCH}${encodeURIComponent(headword)}`,
+  originNo,
+  topCategory: 'CTE',
+  checkedAt: '2026-10-12',
+})
+
+/** 비교 포인트와 비수지 여부는 제작자가 확정하기 전까지 TODO로 둔다 */
+const todoPoints = (): SignPoint[] => [
+  { aspect: null, text: TODO },
+  { aspect: null, text: TODO },
+]
 
 /**
- * 화면에 노출할 표현.
+ * 로컬 표현 풀. 학습 세션마다 이 중 4개를 고른다(src/lib/session.ts).
+ * 제작자가 확인한 항목만 추가한다 — 화면 코드는 바꾸지 않아도 된다.
+ */
+export const SIGNS: SignItem[] = [
+  {
+    id: 'hello',
+    meaning: '안녕하세요',
+    order: 1,
+    video: 'signs/01-hello.mp4',
+    poster: 'signs/01-hello.webp',
+    durationSec: 0, // TODO(제작자 입력): 영상 삽입 후 실제 길이
+    points: todoPoints(),
+    nonManualRequired: false, // TODO(제작자 입력)
+    dictionary: dictionaryRef('안녕하세요', '3331'),
+    status: 'draft',
+  },
+  {
+    id: 'thanks',
+    meaning: '감사합니다',
+    order: 2,
+    video: 'signs/02-thanks.mp4',
+    poster: 'signs/02-thanks.webp',
+    durationSec: 0, // TODO(제작자 입력): 영상 삽입 후 실제 길이
+    points: todoPoints(),
+    nonManualRequired: false, // TODO(제작자 입력)
+    dictionary: dictionaryRef('감사합니다', '2372'),
+    status: 'draft',
+  },
+  {
+    id: 'sorry',
+    meaning: '미안합니다',
+    order: 3,
+    video: 'signs/03-sorry.mp4',
+    poster: 'signs/03-sorry.webp',
+    durationSec: 0, // TODO(제작자 입력): 영상 삽입 후 실제 길이
+    points: todoPoints(),
+    nonManualRequired: false, // TODO(제작자 입력)
+    dictionary: dictionaryRef('미안합니다', '9917'),
+    status: 'draft',
+  },
+  {
+    id: 'okay',
+    meaning: '괜찮아요',
+    order: 4,
+    video: 'signs/04-okay.mp4',
+    poster: 'signs/04-okay.webp',
+    durationSec: 0, // TODO(제작자 입력): 영상 삽입 후 실제 길이
+    points: todoPoints(),
+    nonManualRequired: false, // TODO(제작자 입력)
+    dictionary: dictionaryRef('괜찮아요', '9466'),
+    status: 'draft',
+  },
+]
+
+/**
+ * 화면에 노출할 표현 = 세션 추첨 대상 풀.
  * 배포 빌드에는 dictionary-checked 항목만, 개발 모드에서는 draft도 노출한다(CLAUDE.md §8).
  */
 export const VISIBLE_SIGNS: SignItem[] = import.meta.env.DEV

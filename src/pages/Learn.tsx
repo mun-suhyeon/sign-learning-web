@@ -3,23 +3,29 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { Arrow } from '../components/Arrow'
 import { Header } from '../components/Header'
 import { StepTabs, type Step } from '../components/StepTabs'
-import { VISIBLE_SIGNS, pad2, type SignItem } from '../data/signs'
+import { pad2, type SignItem } from '../data/signs'
 import { CompareStep } from '../learn/CompareStep'
 import { PracticeStep } from '../learn/PracticeStep'
 import { WatchStep } from '../learn/WatchStep'
 import { markSeen, setLearned } from '../lib/progress'
+import { useSessionSigns } from '../lib/session'
 import type { Recording } from '../lib/recorder'
 
 export default function Learn() {
   const { id } = useParams()
-  const sign = VISIBLE_SIGNS.find((s) => s.id === id)
-  if (!sign) return <Navigate to="/" replace />
+  const session = useSessionSigns()
+  const index = session.findIndex((s) => s.id === id)
+  // 현재 세션의 4개에 없는 표현이면 홈으로
+  if (index < 0) return <Navigate to="/" replace />
+  // 화면의 표현 번호는 세션 안의 위치를 쓴다. 진행 상태는 sign.id 기준
+  const sign = { ...session[index], order: index + 1 }
+  const nextId = session[index + 1]?.id ?? null
   // 표현이 바뀌면 단계 상태를 처음부터 다시 시작한다
-  return <LearnScreen key={sign.id} sign={sign} />
+  return <LearnScreen key={sign.id} sign={sign} total={session.length} nextId={nextId} />
 }
 
 /** 학습 화면 — 한 화면 안에서 WATCH → PRACTICE → COMPARE (CLAUDE.md §4) */
-function LearnScreen({ sign }: { sign: SignItem }) {
+function LearnScreen({ sign, total, nextId }: { sign: SignItem; total: number; nextId: string | null }) {
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>('watch')
   const [recording, setRecording] = useState<Recording | null>(null)
@@ -68,8 +74,8 @@ function LearnScreen({ sign }: { sign: SignItem }) {
 
   const next = () => {
     setLearned(sign.id, true)
-    const following = VISIBLE_SIGNS.find((s) => s.order > sign.order)
-    navigate(following ? `/learn/${following.id}` : '/')
+    // 세션의 다음 표현으로. 4번째 다음에는 홈으로 돌아간다
+    navigate(nextId ? `/learn/${nextId}` : '/')
   }
 
   const reachable: Step[] = recording ? ['watch', 'practice', 'compare'] : ['watch', 'practice']
@@ -78,8 +84,8 @@ function LearnScreen({ sign }: { sign: SignItem }) {
     <div className="shell learn">
       <Header
         current={sign.order}
-        total={VISIBLE_SIGNS.length}
-        counterLabel={`${VISIBLE_SIGNS.length}개 표현 중 ${sign.order}번째`}
+        total={total}
+        counterLabel={`${total}개 표현 중 ${sign.order}번째`}
       />
 
       <div className="learn-top">

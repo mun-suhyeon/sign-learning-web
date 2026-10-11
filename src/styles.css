@@ -254,6 +254,14 @@ video {
   margin: 0;
 }
 
+.home-hint-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+}
+
 .dot {
   width: 0.5rem;
   height: 0.5rem;
@@ -946,8 +954,13 @@ video {
   cursor: pointer;
 }
 
-.text-button:hover {
+.text-button:hover:not(:disabled) {
   text-decoration: underline;
+}
+
+.text-button:disabled {
+  color: var(--muted);
+  cursor: default;
 }
 
 .compare-controls-rule {

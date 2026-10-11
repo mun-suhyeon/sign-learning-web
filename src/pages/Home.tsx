@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom'
 import { Arrow } from '../components/Arrow'
 import { Header } from '../components/Header'
 import { ReferencePlaceholder } from '../components/VideoFrame'
-import { VISIBLE_SIGNS, isTodo, pad2, type SignItem } from '../data/signs'
+import { isTodo, pad2, type SignItem } from '../data/signs'
 import { getProgress, statusOf, useProgress, type ProgressStatus } from '../lib/progress'
+import { canNewSet, newSet, useSessionSigns } from '../lib/session'
 
 const STATUS: Record<ProgressStatus, { action: string; state: string; ratio: number; spoken: string }> = {
   done: { action: 'COMPLETED', state: 'DONE', ratio: 1, spoken: '익힘' },
@@ -13,14 +14,15 @@ const STATUS: Record<ProgressStatus, { action: string; state: string; ratio: num
 
 export default function Home() {
   const progress = useProgress()
-  const learned = VISIBLE_SIGNS.filter((s) => getProgress(progress, s.id).learned).length
+  const signs = useSessionSigns()
+  const learned = signs.filter((s) => getProgress(progress, s.id).learned).length
 
   return (
     <div className="shell">
       <Header
         current={learned}
-        total={VISIBLE_SIGNS.length}
-        counterLabel={`전체 ${VISIBLE_SIGNS.length}개 중 ${learned}개 익힘`}
+        total={signs.length}
+        counterLabel={`이번 ${signs.length}개 중 ${learned}개 익힘`}
       />
 
       <main>
@@ -39,17 +41,31 @@ export default function Home() {
               <br />
               두 영상을 나란히 보며 차이를 확인합니다.
             </p>
-            <p className="label home-hint">
-              <span className="dot" aria-hidden="true" />
-              SELECT AN EXPRESSION BELOW
-            </p>
+            <div className="home-hint-row">
+              <p className="label home-hint">
+                <span className="dot" aria-hidden="true" />
+                SELECT AN EXPRESSION BELOW
+              </p>
+              <button
+                type="button"
+                className="text-button label"
+                onClick={newSet}
+                disabled={!canNewSet}
+                aria-describedby={canNewSet ? undefined : 'new-set-hint'}
+              >
+                NEW SET / 새로운 4개
+              </button>
+              <span id="new-set-hint" className="sr-only">
+                표현이 5개 이상일 때 새로운 조합을 고를 수 있어요.
+              </span>
+            </div>
           </div>
         </section>
 
         <ul className="archive-grid">
-          {VISIBLE_SIGNS.map((sign) => (
+          {signs.map((sign, i) => (
             <li key={sign.id}>
-              <ExpressionCard sign={sign} status={statusOf(getProgress(progress, sign.id))} />
+              <ExpressionCard sign={sign} position={i + 1} status={statusOf(getProgress(progress, sign.id))} />
             </li>
           ))}
         </ul>
@@ -72,9 +88,10 @@ export default function Home() {
   )
 }
 
-function ExpressionCard({ sign, status }: { sign: SignItem; status: ProgressStatus }) {
+/** position = 현재 세션 안의 위치 (1~4). 진행 상태는 표현 id 기준 */
+function ExpressionCard({ sign, position, status }: { sign: SignItem; position: number; status: ProgressStatus }) {
   const s = STATUS[status]
-  const no = pad2(sign.order)
+  const no = pad2(position)
   const meaning = isTodo(sign.meaning) ? '의미 정보 준비 중' : sign.meaning
 
   return (
@@ -83,7 +100,7 @@ function ExpressionCard({ sign, status }: { sign: SignItem; status: ProgressStat
       className="card"
       aria-label={`표현 ${no}, ${meaning}, ${s.spoken}`}
     >
-      <ReferencePlaceholder refNo={sign.order} durationSec={sign.durationSec} tone="light" />
+      <ReferencePlaceholder refNo={position} durationSec={sign.durationSec} tone="light" />
       <div className="card-body">
         <p className="card-kicker">표현 {no}</p>
         <div className="card-title-row">
