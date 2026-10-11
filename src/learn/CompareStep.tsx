@@ -107,17 +107,16 @@ export function CompareStep({ sign, recording, onRetry, onNext }: Props) {
         <section className="pane" aria-label="기준 영상">
           <div className="stage-labels label">
             <span>REFERENCE</span>
-            <span>ORIGINAL</span>
           </div>
           <ReferenceVideo sign={sign} videoRef={refVideo} loop={false} onReady={onRefReady} />
         </section>
 
         <section className="pane" aria-label="내 녹화 (거울 화면)">
           <div className="stage-labels label">
-            <span>MY MOVEMENT</span>
+            <span>MY RECORDING</span>
             <span>MIRRORED</span>
           </div>
-          <div className="webcam">
+          <div className="video-box webcam">
             {/* 내 녹화 재생도 거울 상태 고정 (CLAUDE.md §11). 녹화본은 메모리의 Blob URL */}
             <video
               ref={myVideo}

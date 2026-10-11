@@ -43,7 +43,6 @@ export function WatchStep({ sign, onPractice }: Props) {
         </h2>
         <div className="stage-labels label">
           <span>REFERENCE</span>
-          <span>ORIGINAL ORIENTATION</span>
         </div>
 
         <ReferenceVideo

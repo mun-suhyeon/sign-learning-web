@@ -12,17 +12,18 @@ interface Props {
 /**
  * 기준 영상 자리 표시 (십자선 + REFERENCE VIDEO).
  * 실제 촬영 영상이 준비되기 전까지 쓰며, 다른 수어 영상으로 대체하지 않는다(CLAUDE.md §7.5).
+ * 학습 화면(dark)에서는 표현 번호·길이가 이미 제목과 재생 막대에 있으므로 반복하지 않는다.
  */
 export function ReferencePlaceholder({ refNo, durationSec, tone }: Props) {
   return (
     <div className={`frame frame-${tone} frame-placeholder`} aria-hidden="true">
       <span className="frame-cross" />
-      <span className="frame-label frame-ref">REF / {pad2(refNo)}</span>
+      {tone === 'light' && <span className="frame-label frame-ref">REF / {pad2(refNo)}</span>}
       <span className="frame-center">
         <span className="frame-plus">+</span>
         <span className="frame-label">REFERENCE VIDEO</span>
       </span>
-      <span className="frame-label frame-time">00:00 — {formatTime(durationSec)}</span>
+      {tone === 'light' && <span className="frame-label frame-time">00:00 — {formatTime(durationSec)}</span>}
     </div>
   )
 }
@@ -60,7 +61,7 @@ export function ReferenceVideo({
   const [failed, setFailed] = useState(false)
 
   return (
-    <div className="reference-video">
+    <div className="video-box reference-video">
       {!failed && (
         <video
           ref={videoRef}

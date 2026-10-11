@@ -114,7 +114,6 @@ export function PracticeStep({ sign, onRecorded }: Props) {
         <section className="pane" aria-label="기준 영상">
           <div className="stage-labels label">
             <span>REFERENCE</span>
-            <span>ORIGINAL</span>
           </div>
           <ReferenceVideo
             sign={sign}
@@ -129,13 +128,12 @@ export function PracticeStep({ sign, onRecorded }: Props) {
             <span>MY MOVEMENT</span>
             <span>MIRRORED</span>
           </div>
-          <div className="webcam">
+          <div className="video-box webcam">
             {/* 웹캠 미리보기는 거울처럼 좌우반전 고정 (CLAUDE.md §11) */}
             <video ref={camVideo} className={`mirrored${hasPreview ? ' is-live' : ''}`} muted playsInline aria-hidden="true" />
             {!hasPreview && (
               <div className="webcam-empty">
                 <span className="webcam-icon" aria-hidden="true" />
-                <span className="frame-label">WEBCAM PREVIEW</span>
                 <p role={phase.kind === 'error' ? 'alert' : undefined}>
                   {phase.kind === 'error' ? phase.message : '카메라는 연습을 시작할 때만 사용됩니다.'}
                 </p>

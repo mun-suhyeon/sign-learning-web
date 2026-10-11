@@ -445,18 +445,22 @@ video {
 }
 
 /* ── 학습 화면: 상단 ── */
-/* 화면 높이를 채우되, 낮은 창에서는 내용이 겹치지 않도록 아래로 늘어난다 */
+/*
+ * 영상 비율과 위계를 화면 높이에 맞추는 것보다 우선한다.
+ * 영상을 한 화면에 넣으려고 늘이거나 줄이지 않으며, 필요하면 스크롤한다.
+ */
 .learn {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  padding-bottom: 2.5rem;
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 1.1rem;
-  margin-top: 3.2rem;
+  margin-top: 1.6rem;
   font-size: 0.875rem;
   text-decoration: none;
 }
@@ -470,8 +474,8 @@ video {
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  margin-top: 2.9rem;
-  padding-bottom: 1.95rem;
+  margin-top: 1.5rem;
+  padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -499,7 +503,7 @@ video {
 .step-tabs button {
   display: block;
   width: 100%;
-  padding: 0 0 1.15rem;
+  padding: 0 0 0.85rem;
   border: 0;
   border-bottom: 3px solid var(--rule-soft);
   background: none;
@@ -533,17 +537,18 @@ video {
 .stage {
   display: grid;
   flex: 1;
-  padding-block: 2.05rem 1.9rem;
+  align-content: start;
+  padding-top: 1.25rem;
 }
 
 .stage-watch {
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 23%);
+  /* 사이드 내용 폭이 CTA(300px)보다 좁아지지 않도록: 300 + 왼쪽 여백 2rem + 구분선 1px */
+  grid-template-columns: minmax(0, 1fr) minmax(calc(300px + 2rem + 1px), 23%);
 }
 
 .stage-main {
   display: flex;
   flex-direction: column;
-  min-height: 0;
   padding-right: 2rem;
 }
 
@@ -551,27 +556,38 @@ video {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.15rem;
+  margin-bottom: 0.7rem;
   font-size: 0.75rem;
 }
 
-/* ── 기준 영상 ── */
-.reference-video {
+/*
+ * 모든 영상 영역(기준 영상, 웹캠 미리보기, 내 녹화)은 16:9 고정.
+ * 높이는 너비에서만 정해지고, 화면 높이에 맞춰 늘이거나 줄이지 않는다.
+ */
+.video-box {
   position: relative;
-  flex: 1;
-  min-height: 260px;
-  background: var(--screen);
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
   overflow: hidden;
 }
 
-/* 기준 영상은 transform 등으로 절대 반전하지 않는다 (CLAUDE.md §11) */
-.reference-video video {
+.video-box video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: var(--screen);
+  background: #000;
+}
+
+/* ── 기준 영상 ── */
+.reference-video {
+  background: #000;
+}
+
+/* 기준 영상은 transform 등으로 절대 반전하지 않는다 (CLAUDE.md §11) */
+.reference-video video {
   opacity: 0;
 }
 
@@ -675,8 +691,8 @@ video {
 }
 
 .observe-title {
-  margin: 2.95rem 0 0;
-  padding-bottom: 1.95rem;
+  margin: 0;
+  padding-bottom: 1.1rem;
   border-bottom: 1px solid var(--rule-soft);
   font-size: 0.8125rem;
   font-weight: 400;
@@ -692,7 +708,7 @@ video {
   display: flex;
   align-items: baseline;
   gap: 1.35rem;
-  padding-block: 1.55rem;
+  padding-block: 1.25rem;
   border-bottom: 1px solid var(--rule-soft);
 }
 
@@ -708,7 +724,15 @@ video {
 }
 
 .stage-side-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   margin-top: auto;
+  padding-top: 2rem;
+}
+
+.stage-side-bottom .source-link {
+  align-self: stretch;
 }
 
 .source-link {
@@ -741,24 +765,36 @@ video {
   text-decoration: underline;
 }
 
+/* 주요 버튼 (직접 해보기 / 연습 시작 / 다음 표현 / 다시 연습) — 데스크톱에서 모두 300×72 */
 .cta {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  width: 100%;
-  min-height: 4.9rem;
-  padding: 0 1.75rem;
+  width: 300px;
+  max-width: 100%;
+  height: 72px;
+  padding: 0 1.6rem;
   border: 0;
   background: var(--ink);
   color: var(--paper);
   font-family: var(--sans);
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   font-weight: 500;
   cursor: pointer;
 }
 
-.cta:hover {
+.cta:disabled {
+  background: #8f8e89;
+  cursor: not-allowed;
+}
+
+.cta:disabled svg {
+  translate: none;
+}
+
+.cta:hover:not(:disabled) {
   background: #2c2c2a;
 }
 
@@ -766,16 +802,16 @@ video {
   transition: translate 0.15s ease;
 }
 
-.cta:hover svg {
+.cta:hover:not(:disabled) svg {
   translate: 4px 0;
 }
 
 /* ── PRACTICE / COMPARE: 두 화면 나란히 ── */
 .stage-pair {
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 1fr auto auto;
 }
 
+/* 왼쪽(기준)과 오른쪽(나)은 항상 같은 크기 */
 .pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -785,23 +821,9 @@ video {
 .pane {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-}
-
-.webcam {
-  position: relative;
-  flex: 1;
-  min-height: 260px;
-  background: var(--screen);
-  overflow: hidden;
 }
 
 .webcam video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
   opacity: 0;
 }
 
@@ -883,13 +905,13 @@ video {
 }
 
 .stage-pair > .action-bar:not(.compare-bar) {
-  margin-top: 2.9rem;
-  padding-top: 2.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
   border-top: 1px solid var(--rule);
 }
 
 .action-help {
-  margin: 0 0 1.4rem;
+  margin: 0 0 1rem;
   color: #4a4945;
   font-size: 0.9375rem;
   line-height: 1.6;
@@ -901,18 +923,7 @@ video {
 }
 
 .action-cta {
-  flex: none;
-  width: min(23rem, 40%);
   margin-bottom: -1px;
-}
-
-.action-cta:disabled {
-  background: #8f8e89;
-  cursor: not-allowed;
-}
-
-.action-cta:disabled svg {
-  translate: none;
 }
 
 /* ── COMPARE: 공동 컨트롤, 스스로 비교 ── */
@@ -920,7 +931,7 @@ video {
   display: flex;
   align-items: center;
   gap: 3rem;
-  margin-top: 2.6rem;
+  margin-top: 1.25rem;
 }
 
 .text-button {
@@ -946,7 +957,7 @@ video {
 }
 
 .compare-bar {
-  margin-top: 1.6rem;
+  margin-top: 1.1rem;
 }
 
 .self-check {
@@ -990,10 +1001,6 @@ video {
 
 /* ── 학습 화면: 좁은 화면 ── */
 @media (max-width: 1100px) {
-  .learn {
-    height: auto;
-  }
-
   .learn-title-row {
     flex-wrap: wrap;
   }
@@ -1010,18 +1017,13 @@ video {
     grid-template-columns: 1fr;
   }
 
-  .webcam {
-    flex: none;
-    aspect-ratio: 16 / 9;
-  }
-
   .action-bar {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-end;
   }
 
-  .action-cta {
-    width: 100%;
+  .action-help {
+    align-self: stretch;
   }
 
   .compare-controls {
@@ -1029,13 +1031,12 @@ video {
     gap: 1rem 2rem;
   }
 
-  .stage-main {
-    padding-right: 0;
+  .self-check {
+    align-self: stretch;
   }
 
-  .reference-video {
-    flex: none;
-    aspect-ratio: 16 / 9;
+  .stage-main {
+    padding-right: 0;
   }
 
   .stage-side {
@@ -1046,8 +1047,16 @@ video {
   .observe-title {
     margin-top: 2rem;
   }
+}
 
+/* 좁은 화면에서만 주요 버튼 너비를 화면에 맞춘다 */
+@media (max-width: 760px) {
+  .cta {
+    width: 100%;
+  }
+
+  .action-bar,
   .stage-side-bottom {
-    margin-top: 2rem;
+    align-items: stretch;
   }
 }
