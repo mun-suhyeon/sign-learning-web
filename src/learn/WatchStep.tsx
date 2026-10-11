@@ -3,8 +3,6 @@ import { Arrow } from '../components/Arrow'
 import { ReferenceVideo } from '../components/VideoFrame'
 import { formatTime, isTodo, pad2, type SignItem } from '../data/signs'
 
-const DICTIONARY_HOME = 'https://sldict.korean.go.kr'
-
 interface Props {
   sign: SignItem
   onPractice: () => void
@@ -32,7 +30,7 @@ export function WatchStep({ sign, onPractice }: Props) {
     if (videoRef.current) videoRef.current.playbackRate = next
   }
 
-  const sourceUrl = sign.dictionary.searchUrl || DICTIONARY_HOME
+  const { source } = sign
   const unavailable = ready ? undefined : '참고 시연 영상 준비 중'
 
   return (
@@ -113,13 +111,18 @@ export function WatchStep({ sign, onPractice }: Props) {
         </section>
 
         <div className="stage-side-bottom">
-          <a className="source-link" href={sourceUrl} target="_blank" rel="noreferrer">
+          {/* CC BY 저작자 표시: 제목·저작자·출처·라이선스 */}
+          <a className="source-link" href={source.url} target="_blank" rel="noreferrer" title={source.title}>
             <span>
-              <span className="label source-kicker">SOURCE / REFERENCE</span>
-              <span className="source-name">국립국어원 한국수어사전</span>
+              <span className="label source-kicker">SOURCE / {source.license}</span>
+              <span className="source-name">
+                {source.site} · {source.author}
+              </span>
             </span>
             <Arrow />
-            <span className="sr-only">(새 창에서 열림)</span>
+            <span className="sr-only">
+              원 저작물 「{source.title}」, {source.license} 라이선스 (새 창에서 열림)
+            </span>
           </a>
           <button type="button" className="cta" onClick={onPractice}>
             직접 해보기

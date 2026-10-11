@@ -1,10 +1,8 @@
 import { useRef, useState } from 'react'
 import { Arrow } from '../components/Arrow'
 import { ReferenceVideo } from '../components/VideoFrame'
-import { isTodo, pad2, type SignItem } from '../data/signs'
+import type { SignItem } from '../data/signs'
 import type { Recording } from '../lib/recorder'
-
-type Check = 'similar' | 'different'
 
 interface Props {
   sign: SignItem
@@ -26,7 +24,6 @@ export function CompareStep({ sign, recording, onRetry, onNext }: Props) {
   const myVideo = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
   const [rate, setRate] = useState<1 | 0.5>(1)
-  const [checks, setChecks] = useState<(Check | null)[]>(() => sign.points.map(() => null))
 
   const both = () => [refVideo.current, myVideo.current].filter((v): v is HTMLVideoElement => !!v)
   const refReady = () => !!refVideo.current && refVideo.current.readyState > 0
@@ -93,10 +90,6 @@ export function CompareStep({ sign, recording, onRetry, onNext }: Props) {
     }
   }
 
-  const answered = checks.every((c) => c !== null)
-  const anyDifferent = checks.some((c) => c === 'different')
-  const canNext = answered && !anyDifferent
-
   return (
     <div className="stage stage-pair">
       <h2 className="sr-only" tabIndex={-1}>
@@ -158,40 +151,19 @@ export function CompareStep({ sign, recording, onRetry, onNext }: Props) {
       </div>
 
       <div className="action-bar compare-bar">
-        <div className="self-check" role="group" aria-label="스스로 비교하기">
-          {sign.points.map((p, i) => {
-            const label = isTodo(p.text) ? `Observation point ${pad2(i + 1)}` : p.text
-            return (
-              <div key={i} className="self-check-item" role="group" aria-label={label}>
-                <span className="self-check-label">{label}</span>
-                {(['similar', 'different'] as const).map((value) => (
-                  <button
-                    key={value}
-                    type="button"
-                    className="check-button"
-                    aria-pressed={checks[i] === value}
-                    onClick={() => setChecks((prev) => prev.map((c, j) => (j === i ? value : c)))}
-                  >
-                    {value === 'similar' ? 'Similar' : 'Different'}
-                  </button>
-                ))}
-              </div>
-            )
-          })}
+        {/* 비교 포인트가 확정되기 전까지는 판정처럼 보이는 체크 없이 두 가지 선택만 둔다 */}
+        <p className="action-help">두 영상을 나란히 비교한 뒤, 다시 연습하거나 다음 표현으로 넘어가세요.</p>
+        <div className="action-ctas">
+          {/* 같은 표현의 PRACTICE로 돌아간다. 익힘으로 표시하지 않는다 */}
+          <button type="button" className="cta cta-secondary action-cta" onClick={onRetry}>
+            다시 연습
+            <RestartIcon />
+          </button>
+          <button type="button" className="cta action-cta" onClick={onNext}>
+            다음 표현
+            <Arrow />
+          </button>
         </div>
-        <button
-          type="button"
-          className="cta action-cta"
-          onClick={anyDifferent ? onRetry : onNext}
-          disabled={!anyDifferent && !canNext}
-          aria-describedby={!anyDifferent && !canNext ? 'compare-hint' : undefined}
-        >
-          {anyDifferent ? '다시 연습' : '다음 표현'}
-          <Arrow />
-        </button>
-        <span id="compare-hint" className="sr-only">
-          모든 관찰 포인트에 Similar 또는 Different를 선택해 주세요.
-        </span>
       </div>
     </div>
   )

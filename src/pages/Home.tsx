@@ -75,7 +75,7 @@ export default function Home() {
         <div>
           <p className="label">SELF-OBSERVATION, NOT AUTOMATED EVALUATION</p>
           <p className="home-notice">
-            국립국어원 한국수어사전과 대조해 만든 학습 프로토타입으로, 전문가 검수를 거치지 않았습니다. 정확한 표현은{' '}
+            한국저작권위원회 공유마당의 CC BY 수어 영상을 활용한 학습 프로토타입입니다. 전문가 검수를 거치지 않았으니 정확한 표현은{' '}
             <a href="https://sldict.korean.go.kr" target="_blank" rel="noreferrer">
               공식 사전
             </a>

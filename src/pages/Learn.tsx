@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { Arrow } from '../components/Arrow'
 import { Header } from '../components/Header'
 import { StepTabs, type Step } from '../components/StepTabs'
-import { pad2, type SignItem } from '../data/signs'
+import { type SignItem } from '../data/signs'
 import { CompareStep } from '../learn/CompareStep'
 import { PracticeStep } from '../learn/PracticeStep'
 import { WatchStep } from '../learn/WatchStep'
@@ -94,7 +94,8 @@ function LearnScreen({ sign, total, nextId }: { sign: SignItem; total: number; n
           ARCHIVE
         </Link>
         <div className="learn-title-row">
-          <h1 className="learn-title">EXPRESSION {pad2(sign.order)}</h1>
+          {/* WATCH·PRACTICE·COMPARE 모두에서 지금 익히는 표현을 보여 준다 */}
+          <h1 className="learn-title">{sign.meaning}</h1>
           <StepTabs current={step} reachable={reachable} onSelect={setStep} />
         </div>
       </div>

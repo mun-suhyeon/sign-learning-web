@@ -67,7 +67,7 @@ export function ReferenceVideo({
           ref={videoRef}
           className={ready ? 'is-ready' : undefined}
           src={assetUrl(sign.video)}
-          poster={assetUrl(sign.poster)}
+          poster={sign.poster ? assetUrl(sign.poster) : undefined}
           preload="auto"
           muted
           playsInline
